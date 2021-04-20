@@ -4,14 +4,27 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import db_drop_and_create_all, setup_db, Actor, Movie
 
+'''
+create_app()
+  creates and configures the app
+'''
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   CORS(app)
   return app
 
+#comment out db_drop_and_create_all() after the first run of the application!
 db_drop_and_create_all()
+
 APP = create_app()
+
+'''
+GET /actors endpoint
+  gets all actors in the database
+  requires 'get:actors' authentication
+  returns True and list of actors in a JSON object if successful, false along with error and message otherwise
+'''
 
 @APP.route('/actors', methods=['GET'])
 @requires_auth('get:actors')
@@ -28,7 +41,12 @@ def get_actors(payload):
     }), 200
   except:
     abort(422)
-
+'''
+GET /movies endpoint
+  gets all movies in the database
+  requires 'get:movies' authentication
+  returns True and list of movies in a JSON object if successful, false along with error and message otherwise
+'''
 
 @APP.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
@@ -43,6 +61,13 @@ def get_movies(payload):
       'success': True,
       'movies': movies
     }), 200
+
+'''
+DELETE /actors/<int:id> endpoint
+  deletes a specified actor in the database
+  requires 'delete:actors' authentication
+  returns True and id number of the deleted actor in a JSON object if successful, false along with error and message otherwise
+'''
 
 @APP.route('/actors/<int:id>', methods=['DELETE'])
 @requires_auth('delete:actors')
@@ -61,6 +86,13 @@ def delete_actors(payload, id):
   except:
     abort(422)
 
+'''
+DELETE /movies/<int:id> endpoint
+  deletes a specified movie in the database
+  requires 'delete:movies' authentication
+  returns True and id number of the deleted movie in a JSON object if successful, false along with error and message otherwise
+'''
+
 @APP.route('/movies/<int:id>', methods=['DELETE'])
 @requires_auth('delete:movies')
 def delete_movies(payload, id):
@@ -77,6 +109,13 @@ def delete_movies(payload, id):
     }), 200
   except:
     abort(422)
+
+'''
+POST /actors endpoint
+  adds a new actor into the database
+  requires 'post:actors' authentication
+  returns True and name of the newly added actor in a JSON object if successful, false along with error and message otherwise
+'''
 
 @APP.route('/actors', methods=['POST'])
 @requires_auth('post:actors')
@@ -97,6 +136,13 @@ def post_actors(payload):
   except:
     abort(422)
 
+'''
+POST /movies endpoint
+  adds a new movie into the database
+  requires 'post:movies' authentication
+  returns True and title of the newly added movie in a JSON object if successful, false along with error and message otherwise
+'''
+
 @APP.route('/movies', methods=['POST'])
 @requires_auth('post:movies')
 def post_actors(payload):
@@ -115,6 +161,13 @@ def post_actors(payload):
     }), 200
   except:
     abort(422)
+
+'''
+PATCH /actors/<int:id> endpoint
+  updates an existing actor in the database
+  requires 'patch:actors' authentication
+  returns True and name of the updated actor in a JSON object if successful, false along with error and message otherwise
+'''
 
 @APP.route('/actors/<int:id>', methods=['PATCH'])
 @requires_auth('patch:actors')
@@ -139,6 +192,13 @@ def patch_actors(payload, id):
     }), 200
   except:
     abort(422)
+
+'''
+PATCH /movies/<int:id> endpoint
+  updates an existing movie in the database
+  requires 'patch:movie' authentication
+  returns True and title of the updated movie in a JSON object if successful, false along with error and message otherwise
+'''
 
 @APP.route('/movies/<int:id>', methods=['PATCH'])
 @requires_auth('patch:movies')

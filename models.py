@@ -5,13 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 import datetime
 
+database_path = 'postgres://adrianabarca@localhost:5432/movie_test'
 db = SQLAlchemy()
+
 '''
 setup_db
     binds a flask application and a SQLAlchemy service
 '''
-def setup_db(app):
-    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://adrianabarca@localhost:5432/movie_test'
+def setup_db(app, database_path=database_path):
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
@@ -66,6 +68,13 @@ class Movie(db.Model):
   def update(self):
       db.session.commit()
 
+  def long(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'release_date': self.release_date
+        }
+
 
 '''
 Actor
@@ -113,3 +122,9 @@ class Actor(db.Model):
     '''
   def update(self):
       db.session.commit()
+
+  def long(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }

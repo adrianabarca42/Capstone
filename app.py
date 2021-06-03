@@ -36,12 +36,12 @@ def create_app(test_config=None):
     if not request.method == 'GET':
       abort(405)
     actors = Actor.query.all()
-    if len(actors == 0):
+    if len(actors) == 0:
       abort(404)
     try:
       return jsonify({
         'success': True,
-        'actors': actors
+        'actors': [actor.long() for actor in actors]
       }), 200
     except:
       abort(422)
@@ -59,12 +59,12 @@ def create_app(test_config=None):
     if not request.method == 'GET':
       abort(405)
     movies = Movie.query.all()
-    if len(movies == 0):
+    if len(movies) == 0:
       abort(404)
     try:
       return jsonify({
         'success': True,
-        'movies': movies
+        'movies': [movie.long() for movie in movies]
       }), 200
     except:
       abort(422)
@@ -133,7 +133,8 @@ def create_app(test_config=None):
     name = body.get('name')
     age = body.get('age')
     gender = body.get('gender')
-    new_actor = Actor(name=name, age=age, gender=gender)
+    movies_id = body.get('movies_id')
+    new_actor = Actor(name=name, age=age, gender=gender, movies_id=movies_id)
     new_actor.insert()
     try:
       return jsonify({
@@ -235,27 +236,35 @@ def create_app(test_config=None):
 
   @app.errorhandler(422)
   def unprocessable(error):
-      return jsonify({
-                  "success": False, 
-                  "error": 422,
-                  "message": "unprocessable"
-                  }), 422
+    return jsonify({
+              "success": False, 
+              "error": 422,
+              "message": "unprocessable"
+              }), 422
 
   @app.errorhandler(404)
   def resource_not_found(error):
-      return jsonify({
-                  "success": False, 
-                  "error": 404,
-                  "message": "resource not found"
-                  }), 404
+    return jsonify({
+              "success": False, 
+              "error": 404,
+              "message": "resource not found"
+              }), 404
 
   @app.errorhandler(405)
   def method_not_allowed(error):
-      return jsonify({
-                  "success": False, 
-                  "error": 405,
-                  "message": "method not allowed"
-                  }), 405
+    return jsonify({
+              "success": False, 
+              "error": 405,
+              "message": "method not allowed"
+              }), 405
+
+  @app.errorhandler(AuthError)
+  def auth_error(ex):
+    return jsonify({
+              "success": False,
+              "error": ex.status_code,
+              "message": ex.error['code']
+              }),  ex.status_code
 
   return app
 

@@ -10,6 +10,7 @@ from auth import AuthError, requires_auth
 create_app()
   creates and configures the app
 '''
+
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
